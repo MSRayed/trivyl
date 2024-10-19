@@ -1,9 +1,15 @@
 import Player from "@/app/managers/player";
-import { useSocket } from "@/app/socket";
+import { SocketContext } from "@/app/socket";
 import { UserRound } from "lucide-react";
 import { useCookies } from "next-client-cookies";
 import { useParams } from "next/navigation";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 interface LobbyProps {
   setHasName: Dispatch<SetStateAction<boolean>>;
@@ -12,7 +18,7 @@ interface LobbyProps {
 
 const Lobby = ({ setHasName, setIsOwner }: LobbyProps) => {
   const [players, setPlayers] = useState<{ [id: string]: Player }>({});
-  const socket = useSocket();
+  const socket = useContext(SocketContext);
   const params = useParams<{ code: string }>();
   const cookies = useCookies();
 
@@ -48,7 +54,7 @@ const Lobby = ({ setHasName, setIsOwner }: LobbyProps) => {
     }
 
     return () => {
-      socket?.disconnect();
+      // socket?.disconnect();
     };
   }, [socket]);
 

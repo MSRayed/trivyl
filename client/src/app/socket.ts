@@ -1,20 +1,7 @@
-import { useEffect, useState } from "react";
-import { io, Socket } from "socket.io-client";
+"use client";
 
-export const useSocket = () => {
-  const [socket, setSocket] = useState<Socket>();
+import { createContext } from "react";
+import { io } from "socket.io-client";
 
-  useEffect(() => {
-    // Initialize socket connection
-    const socketInstance = io();
-
-    setSocket(socketInstance);
-
-    // Clean up when the component is unmounted
-    return () => {
-      if (socketInstance) socketInstance.disconnect();
-    };
-  }, []);
-
-  return socket;
-};
+export const socket = io();
+export const SocketContext = createContext(socket);

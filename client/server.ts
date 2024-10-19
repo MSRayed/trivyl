@@ -35,7 +35,16 @@ app.prepare().then(() => {
         }
 
         const room = roomManager.getRoom(code);
+
+        if (room.playerExists(socket.id)) {
+          console.log(`Already connected ${name}`);
+
+          return;
+        }
+
         const player = room.admit(name, socket.id);
+
+        console.log(socket.id);
 
         console.log(`Admitted ${name}`);
 
@@ -64,12 +73,25 @@ app.prepare().then(() => {
 
     socket.on("start-game", () => {
       const room = roomManager.getRoomOfPlayer(socket.id);
-      console.log(socket.id);
 
       if (room) {
         room.startGame();
 
+        io.in(room.code).emit("game-started");
+
         console.log(`Room ${room?.code} game started`);
+      }
+    });
+
+    socket.on("ready", () => {
+      const room = roomManager.getRoomOfPlayer(socket.id);
+
+      if (room) {
+        room.playerReady(socket.id, true);
+
+        if (room.allReady()) {
+          io.in(room.code).emit("new-question", room.getQuestion());
+        }
       }
     });
   });

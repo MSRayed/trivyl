@@ -2,24 +2,28 @@ import questionsData from "@/app/data/famousPeople.json";
 
 export interface Question {
   query: string;
-  img: string;
+  id: string;
   answer: string;
+}
+
+export interface IDData {
+  [name: string]: String;
 }
 
 class QuestionBank {
   static getRandomSet(n: number) {
     const set = [];
+    const keys = Object.keys(questionsData.data);
 
     for (let i = 0; i < n; i++) {
-      const question =
-        questionsData.questions[
-          Math.floor(Math.random() * questionsData.questions.length)
-        ];
+      const key = keys[Math.floor(Math.random() * keys.length)];
+      const id = (questionsData.data as IDData)[key as string];
+
       set.push({
         query: questionsData.query,
-        img: question.img,
-        answer: question.answer,
-      });
+        id: id,
+        answer: key,
+      } as Question);
     }
 
     return set;

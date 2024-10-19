@@ -1,13 +1,14 @@
 import { Button } from "@/components/ui/button";
-import { useSocket } from "@/app/socket";
+import { SocketContext } from "@/app/socket";
+import { useContext } from "react";
 
 const Start = () => {
-  // const socket = useSocket();
+  const socket = useContext(SocketContext);
 
   const startGame = () => {
-    // if (socket) {
-    //   socket.emit("start-game");
-    // }
+    if (socket) {
+      socket.emit("start-game");
+    }
   };
 
   return (

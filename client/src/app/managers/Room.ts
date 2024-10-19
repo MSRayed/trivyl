@@ -16,6 +16,21 @@ class Room {
     this.questionManager.initQuestions();
   }
 
+  playerReady(id: string, ready: boolean) {
+    this.getPlayer(id).setReady(ready);
+  }
+
+  allReady() {
+    const notReady = Object.keys(this.players).filter(
+      (k) => !this.players[k].ready
+    );
+    return notReady.length == 0;
+  }
+
+  getQuestion() {
+    return this.questionManager.getQueuedQuestion();
+  }
+
   admit(name: string, id: string) {
     const isOwner = Object.keys(this.players).length === 0;
     const player = new Player(name, id, isOwner);
