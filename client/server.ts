@@ -7,7 +7,7 @@ import { wordMatchPercentage } from "@/lib/utils";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
-const port = process.env.PORT ? Number(process.env.PORT) : 4000;
+const port = Number(process.env.PORT) || 4000;
 
 // when using middleware `hostname` and `port` must be provided below
 const app = next({ dev, hostname, port });

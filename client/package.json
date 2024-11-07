@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "nodemon -x tsx server.ts",
-    "build": "next build",
-    "start": "NODE_ENV=production ts-node server.ts",
+    "build": "next build && tsc",
+    "start": "NODE_ENV=production node dist/server.js",
     "lint": "next lint"
   },
   "dependencies": {
