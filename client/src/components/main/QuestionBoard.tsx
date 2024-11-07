@@ -1,5 +1,4 @@
-import { Question } from "@/app/managers/QuestionBank";
-import { SocketContext } from "@/app/socket";
+import { SocketContext } from "@/app/socketContext";
 import { CldImage } from "next-cloudinary";
 import {
   Dispatch,
@@ -8,60 +7,80 @@ import {
   useEffect,
   useState,
 } from "react";
+import { States } from "@/app/[code]/page";
+import Clock from "@/components/main/Clock";
+import Player from "@/managers/player";
 
 interface QuestionBoardProps {
-  started: boolean;
-  setStarted: Dispatch<SetStateAction<boolean>>;
+  state: States;
+  setState: Dispatch<SetStateAction<States>>;
 }
 
-const QuestionBoard = ({ started, setStarted }: QuestionBoardProps) => {
+interface Question {
+  query: string;
+  id: string;
+}
+
+const QuestionBoard = ({ state, setState }: QuestionBoardProps) => {
   const socket = useContext(SocketContext);
   const [question, setQuestion] = useState<Question>();
+  const [answer, setAnswer] = useState<string>();
+  const [winner, setWinner] = useState<string>();
 
   useEffect(() => {
-    socket.on("game-started", () => {
-      console.log("Game started");
-
-      setStarted(true);
-
-      // Signal server to send question
-      socket.emit("ready");
+    socket.on("new-question", (question) => {
+      setState(States.QUESTION);
+      setQuestion(question);
     });
 
-    socket.on("new-question", (question) => {
-      setQuestion(question);
+    socket.on("answer", (answer) => {
+      setState(States.ANSWER);
+      setAnswer(answer);
+    });
+
+    socket.on("results", (ranking: Player[]) => {
+      setState(States.RESULTS);
+      setWinner(ranking[0].name);
     });
 
     return () => {
       socket.off("game-started");
       socket.off("new-question");
+      socket.off("answer");
     };
   }, []);
 
   return (
     <div
       className="
-      w-[40vw] 
-      bg-secondary
-      rounded-md
-      p-10
+        w-[40vw] 
+        bg-secondary
+        rounded-md
+        p-10
+        min-h-[40vh]
+        flex
+        items-center
+        justify-center
       "
     >
-      {!started ? (
-        <div className="flex justify-center items-center">
-          <h1
-            className="
+      {state == States.LOBBY && (
+        <h1
+          className="
               text-2xl
               text-wrap
               text-center
               text-muted-foreground
             "
-          >
-            Waiting for the owner to start the game
-          </h1>
-        </div>
-      ) : (
+        >
+          Waiting for the owner to start the game
+        </h1>
+      )}
+      {state == States.QUESTION && (
         <div>
+          <div className="pb-5 flex justify-end">
+            <Clock />
+          </div>
+
           <h1
             className="
               text-xl
@@ -86,6 +105,15 @@ const QuestionBoard = ({ started, setStarted }: QuestionBoardProps) => {
           )}
         </div>
       )}
+      {state == States.ANSWER && (
+        <div>
+          <p className="text-center">The answer is:</p>
+          <h1 className="text-2xl font-extrabold text-primary text-center">
+            {answer}
+          </h1>
+        </div>
+      )}
+      {state == States.RESULTS && <h1>{winner} won the game!</h1>}
     </div>
   );
 };

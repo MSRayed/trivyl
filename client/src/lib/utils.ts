@@ -27,3 +27,44 @@ export function generateRandomHueColor() {
 
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
+
+export function generateUniqueString(length: number): string {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters[randomIndex];
+  }
+
+  return result;
+}
+
+export function wordMatchPercentage(
+  str1: string,
+  str2: string,
+  threshold: number
+): boolean {
+  // Split the strings into arrays of words
+  const words1 = str1.toLowerCase().split(/\s+/);
+  const words2 = str2.toLowerCase().split(/\s+/);
+
+  // Determine the shorter and longer list of words
+  const [shorterWords, longerWords] =
+    words1.length <= words2.length ? [words1, words2] : [words2, words1];
+
+  // Count matching words
+  let matchCount = 0;
+  for (let word of shorterWords) {
+    if (longerWords.includes(word)) {
+      matchCount++;
+    }
+  }
+
+  // Calculate the match percentage based on the shorter list's length
+  const matchPercentage = (matchCount / longerWords.length) * 100;
+
+  // Return whether the match percentage meets or exceeds the threshold
+  return matchPercentage >= threshold;
+}

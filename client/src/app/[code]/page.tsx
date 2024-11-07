@@ -1,25 +1,49 @@
 "use client";
 
 import Rules from "@/components/main/Rules";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCookies } from "next-client-cookies";
 import NameForm from "@/components/NameForm";
 import Lobby from "@/components/main/Lobby";
 import QuestionBoard from "@/components/main/QuestionBoard";
 import Start from "@/components/main/Start";
-import { socket, SocketContext } from "../socket";
+import { SocketContext } from "@/app/socketContext";
+import AnswerInput from "@/components/main/AnswerInput";
+import { io, Socket } from "socket.io-client";
+import MessageLog from "@/components/main/MessageLog";
+
+export enum States {
+  LOBBY,
+  QUESTION,
+  ANSWER,
+  RESULTS,
+}
 
 const MainPage = () => {
   const [hasName, setHasName] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
+  const [state, setState] = useState<States>(States.LOBBY);
 
-  const [gameStarted, setGameStarted] = useState(false);
+  const socketRef = useRef<Socket>();
 
   const cookies = useCookies();
 
   useEffect(() => {
     setHasName(!!cookies.get("name"));
-  });
+
+    socketRef.current = io();
+
+    return () => {
+      if (!socketRef.current) {
+        console.log("Socket not defined");
+        return;
+      }
+
+      socketRef.current.close();
+
+      console.log("Disconnected!");
+    };
+  }, []);
 
   if (!hasName) {
     return (
@@ -30,26 +54,32 @@ const MainPage = () => {
   }
 
   return (
-    <SocketContext.Provider value={socket}>
+    <SocketContext.Provider value={socketRef.current || io()}>
       <div className="h-full">
-        {isOwner && <Rules />}
+        <Rules owner={isOwner} />
 
         <div className="flex justify-center p-2 m-auto">
-          <div className="grid grid-cols-[auto,1fr] space-x-4">
+          <div className="grid grid-cols-[auto,1fr,auto] space-x-4">
             <div>
               <Lobby setHasName={setHasName} setIsOwner={setIsOwner} />
             </div>
 
             <div>
-              <QuestionBoard
-                started={gameStarted}
-                setStarted={setGameStarted}
-              />
+              <QuestionBoard state={state} setState={setState} />
             </div>
 
-            {isOwner && !gameStarted && (
-              <div className="col-start-2 col-end-4 flex justify-center">
+            <div>
+              <MessageLog />
+            </div>
+
+            {isOwner && state == States.LOBBY && (
+              <div className="col-start-2 col-end-2 flex justify-center">
                 <Start />
+              </div>
+            )}
+            {state == States.QUESTION && (
+              <div className="col-start-2 col-end-2">
+                <AnswerInput />
               </div>
             )}
           </div>

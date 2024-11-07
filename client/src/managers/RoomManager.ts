@@ -16,6 +16,17 @@ class RoomManager {
     this.rooms[code] = room;
   }
 
+  deleteRoom(code: string) {
+    if (!this.roomExists(code)) {
+      console.log("Couldn't find room to delete");
+      return;
+    }
+
+    delete this.rooms[code];
+
+    return this.getRoom(code);
+  }
+
   getRoom(code: string) {
     return this.rooms[code];
   }

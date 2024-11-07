@@ -7,12 +7,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
 
-const Rules = () => {
+interface Rules {
+  owner: boolean;
+}
+
+const Rules = ({ owner }: Rules) => {
   return (
     <Sheet>
-      <SheetTrigger className="p-10">Edit Rules</SheetTrigger>
+      <SheetTrigger className="p-10">
+        {owner ? "Edit" : "Show"} Rules
+      </SheetTrigger>
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Rules</SheetTitle>

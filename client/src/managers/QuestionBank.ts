@@ -1,4 +1,4 @@
-import questionsData from "@/app/data/famousPeople.json";
+import questionsData from "@/data/famousPeople.json";
 
 export interface Question {
   query: string;

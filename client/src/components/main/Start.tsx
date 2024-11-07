@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { SocketContext } from "@/app/socket";
+import { SocketContext } from "@/app/socketContext";
 import { useContext } from "react";
 
 const Start = () => {
