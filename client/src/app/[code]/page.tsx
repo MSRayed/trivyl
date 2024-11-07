@@ -11,13 +11,7 @@ import { SocketContext } from "@/app/socketContext";
 import AnswerInput from "@/components/main/AnswerInput";
 import { io, Socket } from "socket.io-client";
 import MessageLog from "@/components/main/MessageLog";
-
-export enum States {
-  LOBBY,
-  QUESTION,
-  ANSWER,
-  RESULTS,
-}
+import { States } from "@/lib/utils";
 
 const MainPage = () => {
   const [hasName, setHasName] = useState(false);

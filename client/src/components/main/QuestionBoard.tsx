@@ -7,7 +7,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { States } from "@/app/[code]/page";
+import { States } from "@/lib/utils";
 import Clock from "@/components/main/Clock";
 import Player from "@/managers/player";
 
