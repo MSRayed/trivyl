@@ -37,7 +37,7 @@ const MainPage = () => {
 
       console.log("Disconnected!");
     };
-  }, []);
+  }, [cookies]);
 
   if (!hasName) {
     return (

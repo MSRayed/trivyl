@@ -1,6 +1,6 @@
 import { SocketContext } from "@/app/socketContext";
 import { Input } from "@/components/ui/input";
-import { FormEvent, useContext, useEffect, useRef } from "react";
+import { FormEvent, useContext, useRef } from "react";
 
 const AnswerInput = () => {
   const socket = useContext(SocketContext);
