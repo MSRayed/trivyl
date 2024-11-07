@@ -3,7 +3,6 @@ import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { CookiesProvider } from "next-client-cookies/server";
-import { socket, SocketContext } from "@/app/socketContext";
 
 export const metadata: Metadata = {
   title: "Trivyl",
