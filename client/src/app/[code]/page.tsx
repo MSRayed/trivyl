@@ -50,7 +50,7 @@ const MainPage = () => {
   return (
     <SocketContext.Provider value={socketRef.current || io()}>
       <div className="h-full">
-        <Rules owner={isOwner} />
+        <Rules state={state} owner={isOwner} />
 
         <div className="flex justify-center p-2 m-auto">
           <div className="grid grid-cols-[auto,1fr,auto] space-x-4">

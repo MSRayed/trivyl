@@ -9,8 +9,8 @@ class QuestionManager {
     this.usedQuestions = [];
   }
 
-  initQuestions() {
-    this.questions = QuestionBank.getRandomSet(3);
+  initQuestions(n: number) {
+    this.questions = QuestionBank.getRandomSet(n);
   }
 
   getQueuedQuestion() {

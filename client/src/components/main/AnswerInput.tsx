@@ -14,8 +14,12 @@ const AnswerInput = () => {
         "guess",
         answerRef.current?.value as string,
         (response: any) => {
-          if (response.correct && answerRef.current) {
-            answerRef.current.disabled = true;
+          if (answerRef.current) {
+            if (response.correct) {
+              answerRef.current.disabled = true;
+            } else {
+              answerRef.current.value = "";
+            }
           }
         }
       );

@@ -5,6 +5,16 @@ import RoomManager from "@/managers/RoomManager";
 import { Question } from "@/managers/QuestionBank";
 import { wordMatchPercentage } from "@/lib/utils";
 
+export interface Rules {
+  numberOfQuestions: number;
+  answerTime: number;
+}
+
+const defaultRules = {
+  numberOfQuestions: 5,
+  answerTime: 15,
+} as Rules;
+
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
 const port = Number(process.env.PORT) || 4000;
@@ -35,7 +45,7 @@ app.prepare().then(() => {
       "join",
       (name: string, code: string, callback: (res: any) => {}) => {
         if (!roomManager.roomExists(code)) {
-          roomManager.addRoom(code);
+          roomManager.addRoom(code, defaultRules);
 
           console.log(`New room created ${code}`);
         }
@@ -61,12 +71,38 @@ app.prepare().then(() => {
         socket.to(code).emit("new-player", player);
         socket.join(code);
 
+        // Send the rules
+        io.to(code).emit("set-rules", {
+          numberOfQuestions: room.questionsNum,
+          answerTime: room.answerTime,
+        } as Rules);
+
+        // Sends a message
         io.in(code).emit("message", {
           text: `${player.name} joined the room`,
           type: "join",
         });
       }
     );
+
+    socket.on("change-rules", (rules: Rules) => {
+      const room = roomManager.getRoomOfPlayer(socket.id);
+
+      if (!room) {
+        console.log("Couldn't find room of player");
+        return;
+      }
+
+      const player = room.getPlayer(socket.id);
+
+      if (player.owner) {
+        room.updateRules(rules);
+
+        io.in(room.code).emit("set-rules", rules);
+
+        console.log(`Updated rules for room ${room.code}`);
+      }
+    });
 
     socket.on("disconnect", (_) => {
       const room = roomManager.getRoomOfPlayer(socket.id);
@@ -77,6 +113,15 @@ app.prepare().then(() => {
       }
 
       const player = room.removePlayer(socket.id);
+
+      // Delete room if empty
+      if (room.isEmpty()) {
+        roomManager.deleteRoom(room.code);
+
+        console.log(`Deleted room ${room.code}`);
+        return;
+      }
+
       socket
         .to(room?.code)
         .emit("player-disconnected", player, room.getOwner().id);
@@ -87,13 +132,6 @@ app.prepare().then(() => {
       });
 
       console.log(`${player.name} disconnected`);
-
-      // Delete room if empty
-      if (room.isEmpty()) {
-        roomManager.deleteRoom(room.code);
-
-        console.log(`Deleted room ${room.code}`);
-      }
     });
 
     socket.on("guess", (guess: string, callback: (res: any) => {}) => {
@@ -137,11 +175,15 @@ app.prepare().then(() => {
         });
         io.in(room.code).emit("message", {
           text: `${player.name} got the answer`,
-          type: "guess",
+          type: "right",
         });
       } else {
         callback({
           correct: false,
+        });
+        io.in(room.code).emit("message", {
+          text: `${player.name} guessed ${guess}`,
+          type: "wrong",
         });
       }
     });

@@ -1,21 +1,30 @@
 import Player from "@/managers/player";
 import QuestionManager from "@/managers/QuestionManager";
+import { Rules } from "../../server";
 
 class Room {
   public code: string;
   public players: { [id: string]: Player };
   public questionManager: QuestionManager;
   public timer = 0;
-  public answerTime = 15;
+  public answerTime = 0;
+  public questionsNum = 0;
 
-  constructor(code: string) {
+  constructor(code: string, rules: Rules) {
     this.code = code;
     this.players = {};
     this.questionManager = new QuestionManager();
+    this.answerTime = rules.answerTime;
+    this.questionsNum = rules.numberOfQuestions;
   }
 
   initQuestions() {
-    this.questionManager.initQuestions();
+    this.questionManager.initQuestions(this.questionsNum);
+  }
+
+  updateRules(rules: Rules) {
+    this.questionsNum = rules.numberOfQuestions;
+    this.answerTime = rules.answerTime;
   }
 
   decTimer() {
@@ -99,7 +108,7 @@ class Room {
 
     delete this.players[id];
 
-    if (this.players) {
+    if (Object.keys(this.players).length > 0) {
       this.getOwner().setIsOwner(true);
     }
 

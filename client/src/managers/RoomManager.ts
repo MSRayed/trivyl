@@ -1,3 +1,4 @@
+import { Rules } from "../../server";
 import Room from "./Room";
 
 class RoomManager {
@@ -11,8 +12,8 @@ class RoomManager {
     return this.rooms.hasOwnProperty(code);
   }
 
-  addRoom(code: string) {
-    const room = new Room(code);
+  addRoom(code: string, rules: Rules) {
+    const room = new Room(code, rules);
     this.rooms[code] = room;
   }
 
