@@ -1,10 +1,11 @@
 {
   "name": "trivyl",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "nodemon -x tsx server.ts",
-    "build": "next build && tsc",
+    "build": "next build && node build.js",
     "start": "NODE_ENV=production node dist/server.js",
     "lint": "next lint"
   },
@@ -18,13 +19,11 @@
     "@types/express": "^5.0.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
-    "express": "^4.21.1",
     "lucide-react": "^0.452.0",
     "next": "14.2.15",
     "next-client-cookies": "^1.1.1",
     "next-cloudinary": "^6.15.0",
     "nodemon": "^3.1.7",
-    "pusher-js": "^8.4.0-rc2",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.53.1",
@@ -32,20 +31,19 @@
     "socket.io-client": "^4.8.0",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
-    "tsx": "^4.19.1",
-    "vaul": "^1.1.0",
-    "zod": "^3.23.8"
+    "tsx": "^4.19.1"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/socket.io": "^3.0.1",
+    "esbuild": "^0.24.0",
+    "esbuild-node-externals": "^1.15.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.15",
-    "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.10",
     "typescript": "^5"
   }
 }
